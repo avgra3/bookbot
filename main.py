@@ -1,30 +1,34 @@
+import sys
+import logging
+from stats import num_of_words, character_count
+
+
 def main() -> None:
-    with open("books/frankenstein.txt") as f:
-        frankenstein = f.read()
-    
-    report_intro = "--- Begin report of books/frankenstein.txt ---"
+    usageMessage = "Usage: python3 main.py <path_to_book>"
+    if len(sys.argv) > 2:
+        logging.error("You can supply no more than 1 book.")
+        logging.info(usageMessage)
+        print(usageMessage)
+        sys.exit(1)
+
+    if len(sys.argv) < 2:
+        logging.error("You need to supply 1 book.")
+        logging.info(usageMessage)
+        print(usageMessage)
+        sys.exit(1)
+
+    raw_book_path = sys.argv[1]
+    with open(raw_book_path) as f:
+        book = f.read().lower()
+
+    report_intro = f"--- Begin report of {raw_book_path} ---"
     print(report_intro)
-    word_count = num_of_words(frankenstein)
-    print(f"{word_count} words fount in the document\n\n")
-    count_of_chars = character_count(frankenstein)
+    word_count = num_of_words(book)
+    print(f"{word_count} words found in the document\n\n")
+    count_of_chars = character_count(book)
     for char, count in count_of_chars.items():
-        print(f"The '{char}' character was found {count} times")
+        print(f"{char}: {count}")
     print("--- End report ---")
-
-def num_of_words(book: str) -> int:
-    words = book.split(" ")
-    count = len(words)
-    return count
-
-def character_count(book: str) -> dict[str, int]:
-    char_count = {} 
-    for char in book.lower():
-        if char.isalpha():
-            if char in char_count:
-             char_count[char] += 1
-            else:
-                char_count[char] = 1
-    return dict(sorted(char_count.items(), key=lambda x:x[1], reverse=True))
 
 
 if __name__ == "__main__":
